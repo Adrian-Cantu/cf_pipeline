@@ -1,8 +1,8 @@
-# SUPER-FOCUS plots
+#SUPER-FOCUS plots
 
 _R_ scripts to create bar charts and tables of SUPER-FOCUS output.
 
-### DEPENDENCIES
+###DEPENDENCIES
 Required _R_ packages.
 
 1. getopt
@@ -11,7 +11,14 @@ Required _R_ packages.
 4. plyr
 5. gridExtra
 
-### USAGE
+###SAMPLE PLOTS
+![alldata](https://github.com/Adrian-Cantu/cf_pipeline/tree/master/sample/all_top_functions.png "All Top Functions")
+
+![samplebar](https://github.com/Adrian-Cantu/cf_pipeline/tree/master/sample/sample1.fasta_top_functions.png "Sample Top Functions Barchart")
+
+![sampletab](https://github.com/Adrian-Cantu/cf_pipeline/tree/master/sample/sample1.fasta_top_functions_table.png "Sample Top Functions Table")
+
+###USAGE
 ```
 usage: superfocus_plots.sh -d SF_dir [Options]
 
