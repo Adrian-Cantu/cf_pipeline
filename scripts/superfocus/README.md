@@ -1,6 +1,6 @@
 # SUPER-FOCUS plots
 
-R scripts to create bar charts and tables of SUPER-FOCUS output.
+_R_ scripts to create bar charts and tables of SUPER-FOCUS output.
 
 ### DEPENDENCIES
 Required _R_ packages.
