@@ -12,11 +12,11 @@ Required _R_ packages.
 5. gridExtra
 
 ###SAMPLE PLOTS
-![alldata](https://github.com/Adrian-Cantu/cf_pipeline/tree/master/sample/all_top_functions.png "All Top Functions")
+![alldata](https://github.com/Adrian-Cantu/cf_pipeline/tree/master/scripts/superfocus/sample/all_top_functions.png "All Top Functions")
 
-![samplebar](https://github.com/Adrian-Cantu/cf_pipeline/tree/master/sample/sample1.fasta_top_functions.png "Sample Top Functions Barchart")
+![samplebar](https://github.com/Adrian-Cantu/cf_pipeline/tree/master/scripts/superfocus/sample/sample1.fasta_top_functions.png "Sample Top Functions Barchart")
 
-![sampletab](https://github.com/Adrian-Cantu/cf_pipeline/tree/master/sample/sample1.fasta_top_functions_table.png "Sample Top Functions Table")
+![sampletab](https://github.com/Adrian-Cantu/cf_pipeline/tree/master/scripts/superfocus/sample/sample1.fasta_top_functions_table.png "Sample Top Functions Table")
 
 ###USAGE
 ```
