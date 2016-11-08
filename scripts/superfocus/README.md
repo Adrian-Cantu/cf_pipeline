@@ -17,9 +17,9 @@ usage: superfocus_plots.sh -d SF_dir [Options]
 
 Required
    -d [SF_dir]             : SUPER-FOCUS directory of files
-   -vir                    : Create virulence-specific plots
 
 Optional
+   -vir                    : Create virulence-specific plots
    -h, -?, --help          : This help message
    -v                      : Verbose output
 ```
