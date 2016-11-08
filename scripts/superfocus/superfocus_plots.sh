@@ -17,6 +17,7 @@ usage: $scriptname -d SF_dir [Options]
 
 Required
    -d [SF_dir]             : SUPER-FOCUS directory of files
+   -vir                    : Create virulence-specific plots
 
 Optional
    -h, -?, --help          : This help message
@@ -41,7 +42,8 @@ timeStamp() {
 ####################################################
 scriptname=$(echo $0 | perl -ne '/\/?.*\/(.+)/; print $1;')
 sfdir=""
-verbose=""
+vir=0
+verbose=0
 
 # Set pipefail for catching errors in piped commands
 set -o pipefail
@@ -58,7 +60,10 @@ while [[ $# != 0 ]]; do
         sfdir=$1
         ;;
     -v)
-        verbose=0;
+        verbose=1
+        ;;
+    -vir)
+        vir=1
         ;;
     *)
         echo "Unknown option $1" >&2
@@ -75,21 +80,21 @@ if [[ ! $sfdir ]]; then
 fi
 
 
-# Create log file
-timeStamp
-log="log_${scriptname}_${timestamp}.txt"
-
 # Plotting functions
-getTime && echo "${currtime}    *****Starting plotting scripts!*****"  >&1 | tee -a $log
+getTime && echo "${currtime}    *****Starting plotting scripts!*****"  >&1
+if (( !$verbose )); then
+    getTime && echo "${currtime}    Note: verbose flag was not set."  >&1
+fi
 cmd="Rscript superfocus_functions.R -d ${sfdir}/"
-[[ $verbose ]] && getTime && echo "${currtime}    Executing $cmd"  >&1 | tee -a $log
+(( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
 eval $cmd  2>&1 | tee -a $log
 [[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
 
-# Plotting virulence functions
-cmd="Rscript superfocus_virulence.R -d ${sfdir}/"
-[[ $verbose ]] && getTime && echo "${currtime}    Executing $cmd"  >&1 | tee -a $log
-eval $cmd  2>&1 | tee -a $log
-[[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
-
-getTime && echo "${currtime}    *****Completed!*****"  >&1 | tee -a $log
+if (( $vir )); then
+    # Plotting virulence functions
+    cmd="Rscript superfocus_virulence.R -d ${sfdir}/"
+    (( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
+    eval $cmd  2>&1 | tee -a $log
+    [[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
+fi
+getTime && echo "${currtime}    *****Completed!*****"  >&1
