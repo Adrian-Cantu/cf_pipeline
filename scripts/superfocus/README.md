@@ -1,9 +1,10 @@
 # SUPER-FOCUS plots
 
-R scripts to create bar charts and tables of SUPER-FOCUS output
+R scripts to create bar charts and tables of SUPER-FOCUS output.
 
 ### DEPENDENCIES
 Required _R_ packages.
+
 1. getopt
 2. ggplot2
 3. reshape2
