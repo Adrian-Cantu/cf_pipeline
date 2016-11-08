@@ -11,6 +11,21 @@
 
 # Import necessary packages
 # These may need to be installed first
+if ("getopt" %in% rownames(installed.packages()) == F) {
+    install.packages("getopt")
+}
+if ("ggplot2" %in% rownames(installed.packages()) == F) {
+    install.packages("ggplot2")
+}
+if ("reshape2" %in% rownames(installed.packages()) == F) {
+    install.packages("reshape2")
+}
+if ("plyr" %in% rownames(installed.packages()) == F) {
+    install.packages("plyr")
+}
+if ("gridExtra" %in% rownames(installed.packages()) == F) {
+    install.packages("gridExtra")
+}
 suppressMessages(require("getopt"))
 suppressMessages(require("ggplot2"))
 suppressMessages(require("reshape2"))
@@ -280,7 +295,7 @@ for (s in unique(pl.data$newsample)) {
     tt <- ttheme_default(core=list(fg_params=list(hjust=1, x=1)),
                          colhead=list(fg_params=list(hjust=1, x=1)))
     tbl <- tableGrob(tabledata, rows=NULL, theme=tt)
-    plt <- arrangeGrob(tbl, ncol=1, as.table=T, top=paste(s, "\nSubsystems of top 30 most occurring functions", sep=""))
+    plt <- grid.arrange(tbl, ncol=1, as.table=T, top=paste(s, "\nSubsystems of top 30 most occurring functions", sep=""))
     ggsave(paste(opt$sf_dir, "/", s, "_top_functions_table.png", sep=""),
            plot=plt,
            width=55,

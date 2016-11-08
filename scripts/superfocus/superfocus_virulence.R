@@ -11,6 +11,21 @@
 
 # Import necessary packages
 # These may need to be installed first
+if ("getopt" %in% rownames(installed.packages()) == F) {
+    install.packages("getopt")
+}
+if ("ggplot2" %in% rownames(installed.packages()) == F) {
+    install.packages("ggplot2")
+}
+if ("reshape2" %in% rownames(installed.packages()) == F) {
+    install.packages("reshape2")
+}
+if ("plyr" %in% rownames(installed.packages()) == F) {
+    install.packages("plyr")
+}
+if ("gridExtra" %in% rownames(installed.packages()) == F) {
+    install.packages("gridExtra")
+}
 suppressMessages(require("getopt"))
 suppressMessages(require("ggplot2"))
 suppressMessages(require("reshape2"))
