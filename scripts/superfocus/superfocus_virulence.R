@@ -283,7 +283,7 @@ for (s in unique(pl.data$newsample)) {
     tt <- ttheme_default(core=list(fg_params=list(hjust=1, x=1)),
                          colhead=list(fg_params=list(hjust=1, x=1)))
     tbl <- tableGrob(tabledata, rows=NULL, theme=tt)
-    plt <- grid.arrange(tbl, ncol=1, as.table=T, top=paste(s, "\nSubsystems of top 30 most occurring functions\nfrom virulence-type subsystems", sep=""))
+    plt <- arrangeGrob(tbl, ncol=1, as.table=T, top=paste(s, "\nSubsystems of top 30 most occurring functions\nfrom virulence-type subsystems", sep=""))
     ggsave(paste(opt$sf_dir, "/", s, "_top_virulence_functions_table.png", sep=""),
            plot=plt,
            width=55,
