@@ -1,6 +1,6 @@
 #!/usr/bin/Rscript
-# superfocus_figures.R
-# Figures for SUPER-FOCUS output.
+# superfocus_virulence.R
+# Figures for virulence functions from SUPER-FOCUS output.
 # GitHub: https://github.com/metageni/SUPER-FOCUS/
 # Ref: Silva GGZ, Green K., B. E. Dutilh, and R. A. Edwards: SUPER-FOCUS: A tool for agile functional analysis of shotgun metagenomic data.
 #      (Bioinformatics. 2015 Oct 9. pii: btv584.)
