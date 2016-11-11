@@ -11,6 +11,11 @@ Required _R_ packages.
 4. plyr
 5. gridExtra
 
+Each package can be installed from CRAN by running the command:
+```
+install.packages(c("getopt", "ggplot2", "reshape2", "plyr", "gridExtra"))
+```
+
 ###SAMPLE PLOTS
 ![alldata](https://github.com/Adrian-Cantu/cf_pipeline/blob/master/scripts/superfocus/sample/all_top_functions.png "All Top Functions")
 
