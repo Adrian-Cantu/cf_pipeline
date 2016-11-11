@@ -30,4 +30,13 @@ Optional
    --vir                   : Create virulence-specific plots
    -h, -?, --help          : This help message
    -v                      : Verbose output
+
+Notes
+   - This program specifically uses the SUPER-FOCUS output file:
+      *_____results__all_levels_and_function.xls
+
+   - R scripts specifically look for the columns:
+      1) Subsystem Level 3 (case specific)
+      2) SEED Function (case specific)
+      3) Columns with the word 'abundance' (not case specific)
 ```
