@@ -7,7 +7,7 @@
 #
 # Author: Daniel A Cuevas (dcuevas08.at.gmail.com)
 # Created on 08 Nov 2016
-# Updated on 08 Nov 2016
+# Updated on 11 Nov 2016
 
 VERSION="0.1"
 
@@ -19,7 +19,8 @@ Required
    -d [SF_dir]             : SUPER-FOCUS directory of files
 
 Optional
-   -vir                    : Create virulence-specific plots
+   --skip                  : Number of non-blank lines to skip before columns
+   --vir                   : Create virulence-specific plots
    -h, -?, --help          : This help message
    -v                      : Verbose output
 
@@ -43,6 +44,7 @@ timeStamp() {
 scriptname=$(echo $0 | perl -ne '/\/?.*\/(.+)/; print $1;')
 sfdir=""
 vir=0
+skip=0
 verbose=0
 
 # Set pipefail for catching errors in piped commands
@@ -62,7 +64,12 @@ while [[ $# != 0 ]]; do
     -v)
         verbose=1
         ;;
-    -vir)
+    --skip)
+        shift
+        [[ ! $1 || $(printf "%s" "$1" | perl -ne 'm/(^-.$)/; print $1;') ]] && echo "Missing --skip value" >&2 && usage && exit 2
+        skip=$1
+        ;;
+    --vir)
         vir=1
         ;;
     *)
@@ -85,14 +92,14 @@ getTime && echo "${currtime}    *****Starting plotting scripts!*****"  >&1
 if (( !$verbose )); then
     getTime && echo "${currtime}    Note: verbose flag was not set."  >&1
 fi
-cmd="Rscript superfocus_functions.R -d ${sfdir}/"
+cmd="Rscript superfocus_functions.R -d ${sfdir}/ -s ${skip}"
 (( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
 eval $cmd  2>&1 | tee -a $log
 [[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
 
 if (( $vir )); then
     # Plotting virulence functions
-    cmd="Rscript superfocus_virulence.R -d ${sfdir}/"
+    cmd="Rscript superfocus_virulence.R -d ${sfdir}/ -s ${skip}"
     (( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
     eval $cmd  2>&1 | tee -a $log
     [[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
