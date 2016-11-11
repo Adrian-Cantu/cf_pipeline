@@ -31,7 +31,7 @@ Required
    -d [SF_dir]             : SUPER-FOCUS directory of files
 
 Optional
-   --skip [NUM]            : Number of non-blank lines to skip before columns
+   --skip [NUM]            : Number of non-blank lines to skip before columns [Default: 2]
    --vir                   : Create virulence-specific plots
    -h, -?, --help          : This help message
    -v                      : Verbose output
