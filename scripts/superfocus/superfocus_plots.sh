@@ -19,7 +19,7 @@ Required
    -d [SF_dir]             : SUPER-FOCUS directory of files
 
 Optional
-   --skip [NUM]            : Number of non-blank lines to skip before columns
+   --skip [NUM]            : Number of non-blank lines to skip before columns [Default: 2]
    --vir                   : Create virulence-specific plots
    -h, -?, --help          : This help message
    -v                      : Verbose output
@@ -53,7 +53,7 @@ timeStamp() {
 scriptname=$(echo $0 | perl -ne '/\/?.*\/(.+)/; print $1;')
 sfdir=""
 vir=0
-skip=0
+skip=2
 verbose=0
 
 # Set pipefail for catching errors in piped commands
