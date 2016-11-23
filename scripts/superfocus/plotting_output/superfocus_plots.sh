@@ -12,7 +12,7 @@
 VERSION="0.1"
 
 usage() {
-    echo "
+    echo "$1
 $scriptname version $VERSION
 
 usage: $scriptname -d SF_dir [Options]
