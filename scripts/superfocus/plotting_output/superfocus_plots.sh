@@ -12,8 +12,11 @@
 VERSION="0.1"
 
 usage() {
-    echo "$1
+    echo "
+$scriptname version $VERSION
+
 usage: $scriptname -d SF_dir [Options]
+
 
 Required
    -d [SF_dir]             : SUPER-FOCUS directory of files
@@ -62,7 +65,7 @@ set -o pipefail
 while [[ $# != 0 ]]; do
     case $1 in
     -h|-\?|--help)
-        usage $frmmax
+        usage
         exit 2
         ;;
     -d)
