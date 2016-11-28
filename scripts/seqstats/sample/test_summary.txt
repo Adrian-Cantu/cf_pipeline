@@ -1,0 +1,24 @@
+Metric	Value
+Number of sequences	1000
+Read length (mean)	76.000
+Read length (standard deviation)	0.000
+Quality (mean)	34.402
+Quality (standard deviation)	6.762
+Quality by interval (0-9)	32.640
+Quality by interval (10-19)	35.183
+Quality by interval (20-29)	35.207
+Quality by interval (30-39)	34.483
+Quality by interval (40-49)	34.767
+Quality by interval (50-59)	34.745
+Quality by interval (60-69)	34.242
+Quality by interval (70-79)	33.652
+GC ratio (mean)	0.431
+GC ratio (standard deviation)	0.103
+GC ratio by interval (0-9)	0.471
+GC ratio by interval (10-19)	0.451
+GC ratio by interval (20-29)	0.425
+GC ratio by interval (30-39)	0.424
+GC ratio by interval (40-49)	0.426
+GC ratio by interval (50-59)	0.415
+GC ratio by interval (60-69)	0.414
+GC ratio by interval (70-79)	0.415
