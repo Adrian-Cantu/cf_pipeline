@@ -40,6 +40,13 @@ Notes
 }
 
 
+error() {
+    echo "*****FATAL ERROR OCCURRED*****" >&1
+    echo $1 >&1
+    exit 1
+}
+
+
 getTime() {
     currtime=$(date "+[%F %H:%M:%S]")
 }
