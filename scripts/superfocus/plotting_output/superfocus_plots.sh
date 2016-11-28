@@ -7,7 +7,7 @@
 #
 # Author: Daniel A Cuevas (dcuevas08.at.gmail.com)
 # Created on 08 Nov 2016
-# Updated on 11 Nov 2016
+# Updated on 28 Nov 2016
 
 VERSION="0.1"
 
@@ -106,14 +106,14 @@ if (( !$verbose )); then
 fi
 cmd="Rscript superfocus_functions.R -d ${sfdir}/ -s ${skip}"
 (( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
-eval $cmd  2>&1 | tee -a $log
+eval $cmd  2>&1
 [[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
 
 if (( $vir )); then
     # Plotting virulence functions
     cmd="Rscript superfocus_virulence.R -d ${sfdir}/ -s ${skip}"
     (( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
-    eval $cmd  2>&1 | tee -a $log
+    eval $cmd  2>&1
     [[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
 fi
 getTime && echo "${currtime}    *****Completed!*****"  >&1
