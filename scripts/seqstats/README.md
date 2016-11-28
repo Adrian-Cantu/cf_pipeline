@@ -18,6 +18,13 @@ install.packages(c("getopt", "ggplot2"))
 ```
 
 ###SAMPLE PLOTS
+![qualbox](https://github.com/Adrian-Cantu/cf_pipeline/blob/master/scripts/seqstats/sample/Sample_qualities_boxplots.png "Quality: Box Plot")
+
+![qualdensity](https://github.com/Adrian-Cantu/cf_pipeline/blob/master/scripts/seqstats/sample/Sample_qualities_density.png "Quality: Density Plot")
+
+![gcbox](https://github.com/Adrian-Cantu/cf_pipeline/blob/master/scripts/seqstats/sample/Sample_gcratios_boxplots.png "GC: Box Plot")
+
+![gcdensity](https://github.com/Adrian-Cantu/cf_pipeline/blob/master/scripts/seqstats/sample/Sample_gcratios_density.png "GC: Density Plot")
 
 ###USAGE
 ```
