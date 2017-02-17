@@ -113,7 +113,7 @@ if (( !$verbose )); then
 fi
 
 # Calculate sequencing stats
-cmd="python calcSeqStats.py $fastq $outdir --header"
+cmd="python2.7 calcSeqStats.py $fastq $outdir --header"
 (( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
 eval $cmd  2>&1
 [[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
