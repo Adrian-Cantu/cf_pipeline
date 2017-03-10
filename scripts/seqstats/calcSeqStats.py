@@ -6,7 +6,7 @@
 #
 # Author: Daniel A Cuevas (dcuevas08.at.gmail.com)
 # Created on 23 Nov 2016
-# Updated on 28 Nov 2016
+# Updated on 10 Mar 2017
 
 from __future__ import absolute_import, division, print_function
 import argparse
@@ -29,6 +29,8 @@ parser.add_argument("-s", "--summary_only", action="store_true",
                     help="Only produce a summary file")
 parser.add_argument("--header", action="store_true",
                     help="Include header in output files")
+parser.add_argument("--fasta", action="store_true",
+                    help="File is in FASTA format")
 
 args = parser.parse_args()
 
@@ -64,48 +66,73 @@ readPositions = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69",
                  "180-189", "190-199", "200-209", "210-219", "220-229",
                  "230-239", "240-249", "250+"]
 allqualities = []
-qualities = {k: [] for k in readPositions}
+if not args.fasta:
+    qualities = {k: [] for k in readPositions}
 allgcs = []
 gcs = {k: [] for k in readPositions}
 
 
 # Parse FASTQ
-with open(fastq, "r") as fh:
-    inSeq = False
-    inQual = False
-    for l in fh:
-        l = l.strip()
+if args.fasta:
+    with open(fastq, "r") as fh:
+        inSeq = False
+        for l in fh:
+            l = l.strip()
 
-        if l.startswith("@"):
-            inSeq = True
+            if l.startswith(">"):
+                inSeq = True
 
-        elif inSeq:
-            # In sequence
-            numSequences += 1
-            readLengths.append(len(l))
-            allgcs.append(seq.GC(l))
-            currGC = seq.GC_interval(l, 10)
-            for idx, g in enumerate(currGC):
-                if idx >= len(readPositions):
-                    rp = "250+"
-                else:
-                    rp = readPositions[idx]
-                gcs[rp].append(g)
-            inSeq = False
+            elif inSeq:
+                # In sequence
+                numSequences += 1
+                readLengths.append(len(l))
+                allgcs.append(seq.GC(l))
+                currGC = seq.GC_interval(l, 10)
+                for idx, g in enumerate(currGC):
+                    if idx >= len(readPositions):
+                        rp = "250+"
+                    else:
+                        rp = readPositions[idx]
+                    gcs[rp].append(g)
+                inSeq = False
 
-        elif l.startswith("+"):
-            inQual = True
+else:
+    with open(fastq, "r") as fh:
+        inSeq = False
+        inQual = False
+        for l in fh:
+            l = l.strip()
 
-        elif inQual:
-            allqualities.append(seq.QualToInt(l))
-            currQ = seq.QualToInt_interval(l)
-            for idx, q in enumerate(currQ):
-                if idx >= len(readPositions):
-                    rp = "250+"
-                else:
-                    rp = readPositions[idx]
-                qualities[rp].append(q)
-            inQual = False
+            if l.startswith("@"):
+                inSeq = True
+
+            elif inSeq:
+                # In sequence
+                numSequences += 1
+                readLengths.append(len(l))
+                allgcs.append(seq.GC(l))
+                currGC = seq.GC_interval(l, 10)
+                for idx, g in enumerate(currGC):
+                    if idx >= len(readPositions):
+                        rp = "250+"
+                    else:
+                        rp = readPositions[idx]
+                    gcs[rp].append(g)
+                inSeq = False
+
+            elif l.startswith("+"):
+                inQual = True
+
+            elif inQual:
+                allqualities.append(seq.QualToInt(l))
+                currQ = seq.QualToInt_interval(l)
+                for idx, q in enumerate(currQ):
+                    if idx >= len(readPositions):
+                        rp = "250+"
+                    else:
+                        rp = readPositions[idx]
+                    qualities[rp].append(q)
+                inQual = False
 # End file parsing
 
 ###############################################################################
@@ -114,8 +141,9 @@ with open(fastq, "r") as fh:
 # Values for summary file
 meanLen = np.mean(readLengths)
 stdevLen = np.std(readLengths)
-meanQual = np.mean(allqualities)
-stdevQual = np.std(allqualities)
+if not args.fasta:
+    meanQual = np.mean(allqualities)
+    stdevQual = np.std(allqualities)
 meanGC = np.mean(allgcs)
 stdevGC = np.std(allgcs)
 with open(outdir + fname + "_summary.txt", "w") as f:
@@ -124,13 +152,14 @@ with open(outdir + fname + "_summary.txt", "w") as f:
     f.write("Number of sequences\t{}\n".format(numSequences))
     f.write("Read length (mean)\t{:.3f}\n".format(meanLen))
     f.write("Read length (standard deviation)\t{:.3f}\n".format(stdevLen))
-    f.write("Quality (mean)\t{:.3f}\n".format(meanQual))
-    f.write("Quality (standard deviation)\t{:.3f}\n".format(stdevQual))
-    for rp in readPositions:
-        if len(qualities[rp]) == 0:
-            break
-        f.write("Quality by interval ({})\t".format(rp))
-        f.write("{:.3f}\n".format(np.mean(qualities[rp])))
+    if not args.fasta:
+        f.write("Quality (mean)\t{:.3f}\n".format(meanQual))
+        f.write("Quality (standard deviation)\t{:.3f}\n".format(stdevQual))
+        for rp in readPositions:
+            if len(qualities[rp]) == 0:
+                break
+            f.write("Quality by interval ({})\t".format(rp))
+            f.write("{:.3f}\n".format(np.mean(qualities[rp])))
     f.write("GC ratio (mean)\t{:.3f}\n".format(meanGC))
     f.write("GC ratio (standard deviation)\t{:.3f}\n".format(stdevGC))
     for rp in readPositions:
@@ -147,12 +176,13 @@ if not args.summary_only:
         for l in readLengths:
             f.write(str(l) + "\n")
 
-    with open(outdir + fname + "_qualities", "w") as f:
-        if args.header:
-            f.write("Position\tQuality\n")
-        for rp in readPositions:
-            for q in qualities[rp]:
-                f.write("{}\t{:.3f}\n".format(rp, q))
+    if not args.fasta:
+        with open(outdir + fname + "_qualities", "w") as f:
+            if args.header:
+                f.write("Position\tQuality\n")
+            for rp in readPositions:
+                for q in qualities[rp]:
+                    f.write("{}\t{:.3f}\n".format(rp, q))
 
     with open(outdir + fname + "_gcratios", "w") as f:
         if args.header:
