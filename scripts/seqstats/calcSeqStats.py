@@ -81,7 +81,7 @@ if args.fasta:
     if args.gzip:
         fh = gzip.open(fastq, "rt")
     else:
-        fh = open(fasta, "r")
+        fh = open(fastq, "r")
 
     inSeq = False
     for l in fh:
@@ -109,7 +109,7 @@ else:
     if args.gzip:
         fh = gzip.open(fastq, "rt")
     else:
-        fh = open(fasta, "r")
+        fh = open(fastq, "r")
 
     inSeq = False
     inQual = False
