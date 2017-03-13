@@ -133,7 +133,7 @@ getTime && echo "${currtime}    *****Starting sequence statistics scripts*****" 
 if (( !$verbose )); then
     getTime && echo "${currtime}    Note: verbose flag was not set."  >&1
 fi
-(( $verbose )) && getTime && echo "${currtime}    Note: FASTA flag was set -- no quality output will be produced"  >&1
+(( $fastaflag )) && getTime && echo "${currtime}    Note: FASTA flag was set -- no quality output will be produced"  >&1
 
 # Calculate sequencing stats
 cmd="python3 calcSeqStats.py $fastq $outdir --header $fasta $gzip"
