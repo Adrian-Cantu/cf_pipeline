@@ -1,4 +1,4 @@
-#!/usr/local/bin/python2.7
+#!/usr/local/bin/python3
 # calcSeqStats.py
 # Calculate sequence statistics from FASTQ file.
 # SUMMARY STATS: Number of sequences, read length, quality, G+C.
