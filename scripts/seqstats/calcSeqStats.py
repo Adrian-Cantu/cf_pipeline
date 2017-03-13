@@ -96,8 +96,8 @@ if args.fasta:
             # In sequence
             numSequences += 1
             if args.verbose:
-                print("Working on sequence ", numSequences, end="\r",
-                      file=sys.stderr)
+                printStatus("Working on sequence " + str(numSequences),
+                            end="\r")
             readLengths.append(len(l))
             allgcs.append(seq.GC(l))
             currGC = seq.GC_interval(l, 10)
@@ -128,8 +128,8 @@ else:
             # In sequence
             numSequences += 1
             if args.verbose:
-                print("Working on sequence ", numSequences, end="\r",
-                      file=sys.stderr)
+                printStatus("Working on sequence " + str(numSequences),
+                            end="\r")
             readLengths.append(len(l))
             allgcs.append(seq.GC(l))
             currGC = seq.GC_interval(l, 10)
@@ -155,8 +155,8 @@ else:
                 qualities[rp].append(q)
             inQual = False
 fh.close()
-print("", file=sys.stderr)
 # End file parsing
+print("", file=sys.stderr)
 
 ###############################################################################
 ## BEGIN OUTPUT FILES

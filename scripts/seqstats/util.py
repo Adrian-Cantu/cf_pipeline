@@ -3,7 +3,7 @@
 #
 # Author: Daniel A Cuevas (dcuevas08.at.gmail.com
 # Created on 23 Nov 2016
-# Updated on 23 Nov 2016
+# Updated on 13 Mar 2017
 
 from __future__ import absolute_import, division, print_function
 import sys
@@ -18,9 +18,9 @@ def timeStamp():
     return datetime.datetime.fromtimestamp(t).strftime(fmt)
 
 
-def printStatus(msg):
+def printStatus(msg, end="\n"):
     '''Print status message'''
-    print('{}    {}'.format(timeStamp(), msg), file=sys.stderr)
+    print('{}    {}'.format(timeStamp(), msg), file=sys.stderr, end=end)
     sys.stderr.flush()
 
 
