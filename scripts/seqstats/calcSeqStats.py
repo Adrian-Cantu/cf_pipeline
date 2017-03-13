@@ -79,7 +79,7 @@ gcs = {k: [] for k in readPositions}
 if args.fasta:
     # Check if file is gzipped
     if args.gzip:
-        fh = gzip.open(fastq, "r")
+        fh = gzip.open(fastq, "rt")
     else:
         fh = open(fasta, "r")
 
@@ -107,7 +107,7 @@ if args.fasta:
 else:
     # Check if file is gzipped
     if args.gzip:
-        fh = gzip.open(fastq, "r")
+        fh = gzip.open(fastq, "rt")
     else:
         fh = open(fasta, "r")
 
