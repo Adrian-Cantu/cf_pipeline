@@ -19,6 +19,8 @@ Required
    -o [output_dir]         : Directory for output files
 
 Optional
+   --gz                    : Flag for gzipped compressed files
+   --fasta                 : Flag for FASTA file instead of FASTQ
    -t                      : Title for plots
    -v                      : Verbose output
    -h, -?, --help          : This help message
@@ -52,6 +54,8 @@ timeStamp() {
 ####################################################
 scriptname=$(echo $0 | perl -ne '/\/?.*\/(.+)/; print $1;')
 fastq=""
+fastaflag=0
+gzippedflag=0
 outdir=""
 title=""
 verbose=0
@@ -80,6 +84,12 @@ while [[ $# != 0 ]]; do
         [[ ! $1 || $(printf "%s" "$1" | perl -ne 'm/(^-.$)/; print $1;') ]] && echo "Missing -t value" >&2 && usage && exit 2
         title=$1
         ;;
+    --fasta)
+        fastaflag=1
+        ;;
+    --gz)
+        gzippedflag=1
+        ;;
     -v)
         verbose=1
         ;;
@@ -106,23 +116,40 @@ if [[ ! $title ]]; then
     title=$name
 fi
 
+gzip=""
+# Check if files are gzipped
+if (( $gzippedflag )); then
+    gzip="--gzip"
+fi
+
+fasta=""
+# Check if files are fasta
+if (( $fastaflag )); then
+    fasta="--fasta"
+fi
+
 # Begin statistics scripts
 getTime && echo "${currtime}    *****Starting sequence statistics scripts*****"  >&1
 if (( !$verbose )); then
     getTime && echo "${currtime}    Note: verbose flag was not set."  >&1
 fi
+(( $verbose )) && getTime && echo "${currtime}    Note: FASTA flag was set -- no quality output will be produced"  >&1
 
 # Calculate sequencing stats
-cmd="python2.7 calcSeqStats.py $fastq $outdir --header"
+cmd="python2.7 calcSeqStats.py $fastq $outdir --header $fasta $gzip"
 (( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
 eval $cmd  2>&1
 [[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
 
 # Plot quality stats
-cmd="Rscript seqstats_density.R -i ${outdir}/${name}_qualities -d $outdir --header -s qualities -t $title"
-(( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
-eval $cmd  2>&1
-[[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
+if (( $fastaflag )); then
+    (( $verbose )) && getTime && echo "${currtime}    Skipping quality plots"  >&1
+else
+    cmd="Rscript seqstats_density.R -i ${outdir}/${name}_qualities -d $outdir --header -s qualities -t $title"
+    (( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
+    eval $cmd  2>&1
+    [[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
+fi
 
 # Plot GC ratio stats
 cmd="Rscript seqstats_density.R -i ${outdir}/${name}_gcratios -d $outdir --header -s gcratios -t $title"

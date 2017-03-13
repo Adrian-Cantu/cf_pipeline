@@ -16,6 +16,7 @@ import sys
 import sequtil as seq
 import numpy as np
 import util
+import gzip
 
 
 ###############################################################################
@@ -31,6 +32,8 @@ parser.add_argument("--header", action="store_true",
                     help="Include header in output files")
 parser.add_argument("--fasta", action="store_true",
                     help="File is in FASTA format")
+parser.add_argument("--gzip", action="store_true",
+                    help="File is compressed with GZIP")
 
 args = parser.parse_args()
 
@@ -74,65 +77,76 @@ gcs = {k: [] for k in readPositions}
 
 # Parse FASTQ
 if args.fasta:
-    with open(fastq, "r") as fh:
-        inSeq = False
-        for l in fh:
-            l = l.strip()
+    # Check if file is gzipped
+    if args.gzip:
+        fh = gzip.open(fastq, "r")
+    else:
+        fh = open(fasta, "r")
 
-            if l.startswith(">"):
-                inSeq = True
+    inSeq = False
+    for l in fh:
+        l = l.strip()
 
-            elif inSeq:
-                # In sequence
-                numSequences += 1
-                readLengths.append(len(l))
-                allgcs.append(seq.GC(l))
-                currGC = seq.GC_interval(l, 10)
-                for idx, g in enumerate(currGC):
-                    if idx >= len(readPositions):
-                        rp = "250+"
-                    else:
-                        rp = readPositions[idx]
-                    gcs[rp].append(g)
-                inSeq = False
+        if l.startswith(">"):
+            inSeq = True
+
+        elif inSeq:
+            # In sequence
+            numSequences += 1
+            readLengths.append(len(l))
+            allgcs.append(seq.GC(l))
+            currGC = seq.GC_interval(l, 10)
+            for idx, g in enumerate(currGC):
+                if idx >= len(readPositions):
+                    rp = "250+"
+                else:
+                    rp = readPositions[idx]
+                gcs[rp].append(g)
+            inSeq = False
 
 else:
-    with open(fastq, "r") as fh:
-        inSeq = False
-        inQual = False
-        for l in fh:
-            l = l.strip()
+    # Check if file is gzipped
+    if args.gzip:
+        fh = gzip.open(fastq, "r")
+    else:
+        fh = open(fasta, "r")
 
-            if l.startswith("@"):
-                inSeq = True
+    inSeq = False
+    inQual = False
+    for l in fh:
+        l = l.strip()
 
-            elif inSeq:
-                # In sequence
-                numSequences += 1
-                readLengths.append(len(l))
-                allgcs.append(seq.GC(l))
-                currGC = seq.GC_interval(l, 10)
-                for idx, g in enumerate(currGC):
-                    if idx >= len(readPositions):
-                        rp = "250+"
-                    else:
-                        rp = readPositions[idx]
-                    gcs[rp].append(g)
-                inSeq = False
+        if l.startswith("@"):
+            inSeq = True
 
-            elif l.startswith("+"):
-                inQual = True
+        elif inSeq:
+            # In sequence
+            numSequences += 1
+            readLengths.append(len(l))
+            allgcs.append(seq.GC(l))
+            currGC = seq.GC_interval(l, 10)
+            for idx, g in enumerate(currGC):
+                if idx >= len(readPositions):
+                    rp = "250+"
+                else:
+                    rp = readPositions[idx]
+                gcs[rp].append(g)
+            inSeq = False
 
-            elif inQual:
-                allqualities.append(seq.QualToInt(l))
-                currQ = seq.QualToInt_interval(l)
-                for idx, q in enumerate(currQ):
-                    if idx >= len(readPositions):
-                        rp = "250+"
-                    else:
-                        rp = readPositions[idx]
-                    qualities[rp].append(q)
-                inQual = False
+        elif l.startswith("+"):
+            inQual = True
+
+        elif inQual:
+            allqualities.append(seq.QualToInt(l))
+            currQ = seq.QualToInt_interval(l)
+            for idx, q in enumerate(currQ):
+                if idx >= len(readPositions):
+                    rp = "250+"
+                else:
+                    rp = readPositions[idx]
+                qualities[rp].append(q)
+            inQual = False
+fh.close()
 # End file parsing
 
 ###############################################################################
