@@ -96,8 +96,8 @@ if args.fasta:
             # In sequence
             numSequences += 1
             if args.verbose:
-                printStatus("Working on sequence " + str(numSequences),
-                            end="\r")
+                util.printStatus("Working on sequence " + str(numSequences),
+                                 end="\r")
             readLengths.append(len(l))
             allgcs.append(seq.GC(l))
             currGC = seq.GC_interval(l, 10)
@@ -128,8 +128,8 @@ else:
             # In sequence
             numSequences += 1
             if args.verbose:
-                printStatus("Working on sequence " + str(numSequences),
-                            end="\r")
+                util.printStatus("Working on sequence " + str(numSequences),
+                                 end="\r")
             readLengths.append(len(l))
             allgcs.append(seq.GC(l))
             currGC = seq.GC_interval(l, 10)
