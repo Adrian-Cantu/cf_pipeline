@@ -40,7 +40,7 @@ def GC_interval(seq, interval=10):
 
     seq = seq.lower()
     gcs = []
-    for i in xrange(0, seqlen, interval):
+    for i in range(0, seqlen, interval):
         currSeq = seq[i: i + interval]
         cslen = len(currSeq)
         gcs.append((currSeq.count("g") + currSeq.count("c")) / cslen)
@@ -90,7 +90,7 @@ def QualToInt_interval(qual, phred=33, interval=10):
                          "the expected 33 or 64")
 
     quals = []
-    for i in xrange(0, qlen, interval):
+    for i in range(0, qlen, interval):
         currQuals = qual[i: i + interval]
         quals.append(np.mean([ord(nt) - phred for nt in currQuals]))
 
