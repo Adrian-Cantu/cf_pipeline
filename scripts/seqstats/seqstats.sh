@@ -128,6 +128,11 @@ if (( $fastaflag )); then
     fasta="--fasta"
 fi
 
+vflag=""
+if (( $verbose )); then
+    vflag="-v"
+fi
+
 # Begin statistics scripts
 getTime && echo "${currtime}    *****Starting sequence statistics scripts*****"  >&1
 if (( !$verbose )); then
@@ -136,7 +141,7 @@ fi
 (( $fastaflag )) && getTime && echo "${currtime}    Note: FASTA flag was set -- no quality output will be produced"  >&1
 
 # Calculate sequencing stats
-cmd="python3 calcSeqStats.py $fastq $outdir --header $fasta $gzip"
+cmd="python3 calcSeqStats.py $fastq $outdir --header $fasta $gzip $vflag"
 (( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
 eval $cmd  2>&1
 [[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
