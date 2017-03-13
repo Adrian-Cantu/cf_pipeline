@@ -34,6 +34,8 @@ parser.add_argument("--fasta", action="store_true",
                     help="File is in FASTA format")
 parser.add_argument("--gzip", action="store_true",
                     help="File is compressed with GZIP")
+parser.add_argument("-v", "--verbose", action="store_true",
+                    help="Verbose output")
 
 args = parser.parse_args()
 
@@ -93,6 +95,9 @@ if args.fasta:
         elif inSeq:
             # In sequence
             numSequences += 1
+            if args.verbose:
+                print("Working on sequence ", numSequences, end="\r",
+                      file=sys.stderr)
             readLengths.append(len(l))
             allgcs.append(seq.GC(l))
             currGC = seq.GC_interval(l, 10)
@@ -122,6 +127,9 @@ else:
         elif inSeq:
             # In sequence
             numSequences += 1
+            if args.verbose:
+                print("Working on sequence ", numSequences, end="\r",
+                      file=sys.stderr)
             readLengths.append(len(l))
             allgcs.append(seq.GC(l))
             currGC = seq.GC_interval(l, 10)
@@ -147,6 +155,7 @@ else:
                 qualities[rp].append(q)
             inQual = False
 fh.close()
+print("", file=sys.stderr)
 # End file parsing
 
 ###############################################################################
