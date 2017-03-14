@@ -34,6 +34,8 @@ parser.add_argument("--fasta", action="store_true",
                     help="File is in FASTA format")
 parser.add_argument("--gzip", action="store_true",
                     help="File is compressed with GZIP")
+parser.add_argument("--gc", action="store_true",
+                    help="Calculate GC")
 parser.add_argument("-v", "--verbose", action="store_true",
                     help="Verbose output")
 
@@ -73,8 +75,10 @@ readPositions = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69",
 allqualities = []
 if not args.fasta:
     qualities = {k: [] for k in readPositions}
-allgcs = []
-gcs = {k: [] for k in readPositions}
+
+if args.gc:
+    allgcs = []
+    gcs = {k: [] for k in readPositions}
 
 
 # Parse FASTQ
@@ -99,15 +103,16 @@ if args.fasta:
                 util.printStatus("Working on sequence " + str(numSequences),
                                  end="\r")
             readLengths.append(len(l))
-            allgcs.append(seq.GC(l))
-            currGC = seq.GC_interval(l, 10)
-            for idx, g in enumerate(currGC):
-                if idx >= len(readPositions):
-                    rp = "250+"
-                else:
-                    rp = readPositions[idx]
-                gcs[rp].append(g)
             inSeq = False
+            if args.gc:
+                allgcs.append(seq.GC(l))
+                currGC = seq.GC_interval(l, 10)
+                for idx, g in enumerate(currGC):
+                    if idx >= len(readPositions):
+                        rp = "250+"
+                    else:
+                        rp = readPositions[idx]
+                    gcs[rp].append(g)
 
 else:
     # Check if file is gzipped
@@ -131,15 +136,16 @@ else:
                 util.printStatus("Working on sequence " + str(numSequences),
                                  end="\r")
             readLengths.append(len(l))
-            allgcs.append(seq.GC(l))
-            currGC = seq.GC_interval(l, 10)
-            for idx, g in enumerate(currGC):
-                if idx >= len(readPositions):
-                    rp = "250+"
-                else:
-                    rp = readPositions[idx]
-                gcs[rp].append(g)
             inSeq = False
+            if args.gc:
+                allgcs.append(seq.GC(l))
+                currGC = seq.GC_interval(l, 10)
+                for idx, g in enumerate(currGC):
+                    if idx >= len(readPositions):
+                        rp = "250+"
+                    else:
+                        rp = readPositions[idx]
+                    gcs[rp].append(g)
 
         elif l.startswith("+"):
             inQual = True
@@ -183,13 +189,14 @@ with open(outdir + fname + "_summary.txt", "w") as f:
                 break
             f.write("Quality by interval ({})\t".format(rp))
             f.write("{:.3f}\n".format(np.mean(qualities[rp])))
-    f.write("GC ratio (mean)\t{:.3f}\n".format(meanGC))
-    f.write("GC ratio (standard deviation)\t{:.3f}\n".format(stdevGC))
-    for rp in readPositions:
-        if len(gcs[rp]) == 0:
-            break
-        f.write("GC ratio by interval ({})\t".format(rp))
-        f.write("{:.3f}\n".format(np.mean(gcs[rp])))
+    if args.gc:
+        f.write("GC ratio (mean)\t{:.3f}\n".format(meanGC))
+        f.write("GC ratio (standard deviation)\t{:.3f}\n".format(stdevGC))
+        for rp in readPositions:
+            if len(gcs[rp]) == 0:
+                break
+            f.write("GC ratio by interval ({})\t".format(rp))
+            f.write("{:.3f}\n".format(np.mean(gcs[rp])))
 
 # Print out density files if necessary
 if not args.summary_only:
@@ -207,9 +214,10 @@ if not args.summary_only:
                 for q in qualities[rp]:
                     f.write("{}\t{:.3f}\n".format(rp, q))
 
-    with open(outdir + fname + "_gcratios", "w") as f:
-        if args.header:
-            f.write("Position\tGC_ratio\n")
-        for rp in readPositions:
-            for gc in gcs[rp]:
-                f.write("{}\t{:.3f}\n".format(rp, gc))
+    if args.gc:
+        with open(outdir + fname + "_gcratios", "w") as f:
+            if args.header:
+                f.write("Position\tGC_ratio\n")
+            for rp in readPositions:
+                for gc in gcs[rp]:
+                    f.write("{}\t{:.3f}\n".format(rp, gc))
