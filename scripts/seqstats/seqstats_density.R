@@ -4,7 +4,7 @@
 #
 # Author: Daniel A Cuevas (dcuevas08.at.gmail.com)
 # Created on 23 Nov 2016
-# Updated on 28 Nov 2016
+# Updated on 13 Mar 2017
 
 # Import necessary packages
 # These may need to be installed first
@@ -117,6 +117,14 @@ if (headerFlag) {
     metricName <- gsub("_", " ", colnames(data)[2])
     colnames(data) <- c("V1", "V2")
 }
+
+# Set position order
+data$V1 <- factor(data$V1, levels=c("0-9", "10-19", "20-29", "30-39", "40-49",
+                                    "50-59", "60-69", "70-79", "80-89", "90-99",
+                                    "100-109", "110-119", "120-129", "130-139", "140-149",
+                                    "150-159", "160-169", "170-179", "180-189", "190-199",
+                                    "200-209", "210-219", "220-229", "230-239", "240-249",
+                                    "250+"))
 
 # Set breaks based on special names
 if (metricName == "GC ratio") {
