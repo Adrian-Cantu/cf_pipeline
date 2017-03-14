@@ -19,6 +19,7 @@ Required
    -o [output_dir]         : Directory for output files
 
 Optional
+   --gc                    : Flag to calculate GC
    --gz                    : Flag for gzipped compressed files
    --fasta                 : Flag for FASTA file instead of FASTQ
    -t                      : Title for plots
@@ -56,6 +57,7 @@ scriptname=$(echo $0 | perl -ne '/\/?.*\/(.+)/; print $1;')
 fastq=""
 fastaflag=0
 gzippedflag=0
+gcflag=0
 outdir=""
 title=""
 verbose=0
@@ -89,6 +91,9 @@ while [[ $# != 0 ]]; do
         ;;
     --gz)
         gzippedflag=1
+        ;;
+    --gc)
+        gcflag=1
         ;;
     -v)
         verbose=1
@@ -133,6 +138,12 @@ if (( $verbose )); then
     vflag="-v"
 fi
 
+gc=""
+# Check if GC is to be calculated
+if (( $gcflag )); then
+    gc="--gc"
+fi
+
 # Begin statistics scripts
 getTime && echo "${currtime}    *****Starting sequence statistics scripts*****"  >&1
 if (( !$verbose )); then
@@ -141,7 +152,7 @@ fi
 (( $fastaflag )) && getTime && echo "${currtime}    Note: FASTA flag was set -- no quality output will be produced"  >&1
 
 # Calculate sequencing stats
-cmd="python3 calcSeqStats.py $fastq $outdir --header $fasta $gzip $vflag"
+cmd="python3 calcSeqStats.py $fastq $outdir --header $fasta $gzip $gc $vflag"
 (( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
 eval $cmd  2>&1
 [[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
@@ -157,10 +168,12 @@ else
 fi
 
 # Plot GC ratio stats
-cmd="Rscript seqstats_density.R -i ${outdir}/${name}_gcratios -d $outdir --header -s gcratios -t $title"
-(( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
-eval $cmd  2>&1
-[[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
+if (( $gcflag )); then
+    cmd="Rscript seqstats_density.R -i ${outdir}/${name}_gcratios -d $outdir --header -s gcratios -t $title"
+    (( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
+    eval $cmd  2>&1
+    [[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
+fi
 
 # Plot sequence length stats
 ############################
