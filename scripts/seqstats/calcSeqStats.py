@@ -175,6 +175,8 @@ if not args.fasta:
     stdevQual = np.std(allqualities)
 meanGC = np.mean(allgcs)
 stdevGC = np.std(allgcs)
+if args.verbose:
+    util.printStatus("Printing summary file")
 with open(outdir + fname + "_summary.txt", "w") as f:
     if args.header:
         f.write("Metric\tValue\n")
@@ -200,6 +202,8 @@ with open(outdir + fname + "_summary.txt", "w") as f:
 
 # Print out density files if necessary
 if not args.summary_only:
+    if args.verbose:
+        util.printStatus("Printing read lengths file")
     with open(outdir + fname + "_readlengths", "w") as f:
         if args.header:
             f.write("Lengths\n")
@@ -207,6 +211,8 @@ if not args.summary_only:
             f.write(str(l) + "\n")
 
     if not args.fasta:
+        if args.verbose:
+            util.printStatus("Printing qualities file")
         with open(outdir + fname + "_qualities", "w") as f:
             if args.header:
                 f.write("Position\tQuality\n")
@@ -215,6 +221,8 @@ if not args.summary_only:
                     f.write("{}\t{:.3f}\n".format(rp, q))
 
     if args.gc:
+        if args.verbose:
+            util.printStatus("Printing GC file")
         with open(outdir + fname + "_gcratios", "w") as f:
             if args.header:
                 f.write("Position\tGC_ratio\n")
