@@ -173,8 +173,9 @@ stdevLen = np.std(readLengths)
 if not args.fasta:
     meanQual = np.mean(allqualities)
     stdevQual = np.std(allqualities)
-meanGC = np.mean(allgcs)
-stdevGC = np.std(allgcs)
+if args.gc:
+    meanGC = np.mean(allgcs)
+    stdevGC = np.std(allgcs)
 if args.verbose:
     util.printStatus("Printing summary file")
 with open(outdir + fname + "_summary.txt", "w") as f:
