@@ -1,8 +1,8 @@
-#Sequence statistics plots
+# Sequence statistics plots
 
 _Python_ and _R_ scripts to create bar charts and tables of sequencing statistics output.
 
-###DEPENDENCIES
+### DEPENDENCIES
 Required _Python2.7_ packages.
 
 1. Numpy
@@ -17,7 +17,7 @@ Each _R_ package can be installed from CRAN by running the command:
 install.packages(c("getopt", "ggplot2"))
 ```
 
-###SAMPLE PLOTS
+### SAMPLE PLOTS
 ![qualbox](https://github.com/Adrian-Cantu/cf_pipeline/blob/master/scripts/seqstats/sample/Sample_qualities_boxplots.png "Quality: Box Plot")
 
 ![qualdensity](https://github.com/Adrian-Cantu/cf_pipeline/blob/master/scripts/seqstats/sample/Sample_qualities_density.png "Quality: Density Plot")
@@ -26,7 +26,7 @@ install.packages(c("getopt", "ggplot2"))
 
 ![gcdensity](https://github.com/Adrian-Cantu/cf_pipeline/blob/master/scripts/seqstats/sample/Sample_gcratios_density.png "GC: Density Plot")
 
-###USAGE
+### USAGE
 ```
 seqstats.sh version 0.1
 
@@ -37,6 +37,9 @@ Required
    -o [output_dir]         : Directory for output files
 
 Optional
+   --gc                    : Flag to calculate GC
+   --gz                    : Flag for gzipped compressed files
+   --fasta                 : Flag for FASTA file instead of FASTQ
    -t                      : Title for plots
    -v                      : Verbose output
    -h, -?, --help          : This help message
