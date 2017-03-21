@@ -53,6 +53,7 @@ timeStamp() {
 ####################################################
 #ARGUMENT PARSING
 ####################################################
+scriptdir=$(cd $(dirname $0); pwd -P)
 scriptname=$(echo $0 | perl -ne '/\/?.*\/(.+)/; print $1;')
 fastq=""
 fastaflag=0
@@ -153,7 +154,7 @@ getTime && echo "${currtime}    *****Starting sequence statistics scripts*****" 
 (( !$gcflag )) && getTime && echo "${currtime}    Note: GC flag was not set -- no GC output will be produced"  >&1
 
 # Calculate sequencing stats
-cmd="python3 calcSeqStats.py $fastq $outdir --header $fasta $gzip $gc $vflag"
+cmd="python3 ${scriptdir}/calcSeqStats.py $fastq $outdir --header $fasta $gzip $gc $vflag"
 (( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
 eval $cmd  2>&1
 [[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
@@ -162,7 +163,7 @@ eval $cmd  2>&1
 if (( $fastaflag )); then
     (( $verbose )) && getTime && echo "${currtime}    Skipping quality plots"  >&1
 else
-    cmd="Rscript seqstats_density.R -i ${outdir}/${name}_qualities.tsv -d $outdir --header -s qualities -t $title"
+    cmd="Rscript ${scriptdir}/seqstats_density.R -i ${outdir}/${name}_qualities.tsv -d $outdir --header -s qualities -t $title"
     (( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
     eval $cmd  2>&1
     [[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
@@ -170,7 +171,7 @@ fi
 
 # Plot GC ratio stats
 if (( $gcflag )); then
-    cmd="Rscript seqstats_density.R -i ${outdir}/${name}_gcratios.tsv -d $outdir --header -s gcratios -t $title"
+    cmd="Rscript ${scriptdir}/seqstats_density.R -i ${outdir}/${name}_gcratios.tsv -d $outdir --header -s gcratios -t $title"
     (( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
     eval $cmd  2>&1
     [[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
