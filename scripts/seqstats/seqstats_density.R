@@ -4,7 +4,7 @@
 #
 # Author: Daniel A Cuevas (dcuevas08.at.gmail.com)
 # Created on 23 Nov 2016
-# Updated on 13 Mar 2017
+# Updated on 20 Mar 2017
 
 # Import necessary packages
 # These may need to be installed first
@@ -115,7 +115,7 @@ data <- read.delim(fp, header=headerFlag)
 if (headerFlag) {
     # Replace underscores "_" with space " "
     metricName <- gsub("_", " ", colnames(data)[2])
-    colnames(data) <- c("V1", "V2")
+    colnames(data) <- c("V1", "V2", "V3")
 }
 
 # Set position order
@@ -128,29 +128,29 @@ data$V1 <- factor(data$V1, levels=c("0-9", "10-19", "20-29", "30-39", "40-49",
 
 # Set breaks based on special names
 if (metricName == "GC ratio") {
-    plot.breaks <- seq(0.1, 0.9, 0.2)
-} else if (metricName == "Quality") {
-    plot.breaks <- seq(10, 40, 10)
+    plot.breaks <- seq(0.0, 1.0, 0.2)
+    lim <- c(0, 1)
 } else {
-    plot.breaks <- F
+    plot.breaks <- seq(0, 40, 10)
+    lim <- c(0, 40)
 }
 
+density.data <- aggregate(list(count=data$V3), by=list(metric=as.character(data$V2)), FUN=sum)
+density.data$metric <- as.numeric(density.data$metric)
+
 # Plot density
-mean.x <- mean(data$V2)
-pl <- ggplot(data, aes(V2))
+mean.x <- weighted.mean(density.data$metric, density.data$count)
+pl <- ggplot(density.data, aes(x=metric, y=count))
 if (metricName == "GC ratio") {
-    pl <- pl + geom_histogram(aes(y=..density..), binwidth=0.1, fill=NA, colour="black")
+    pl <- pl + geom_histogram(stat="identity", fill=NA, colour="#a7a7a7")
 } else {
-    pl <- pl + geom_histogram(aes(y=..density..), binwidth=0.5, fill=NA, colour="#a7a7a7") +
-        geom_density(adjust=0.25, alpha=0.3)
+    pl <- pl + geom_histogram(stat="identity", fill=NA, colour="black")
 }
 pl <- pl + geom_vline(aes(xintercept=mean.x), colour="#d62728") +
     my.theme +
-    scale_y_continuous(expand=c(0,0))
-if (plot.breaks) {
-    pl <- pl + scale_x_continuous(breaks=c(plot.breaks, mean.x), labels=c(plot.breaks, round(mean.x, digits=2)))
-}
-pl <- pl + xlab(metricName) + ylab("Density") + ggtitle(title)
+    scale_y_continuous(expand=c(0,0)) +
+    scale_x_continuous(breaks=c(plot.breaks, mean.x), labels=c(plot.breaks, round(mean.x, digits=2)), limits=lim)
+pl <- pl + xlab(metricName) + ylab("Count") + ggtitle(title)
 
 ggsave(paste(outdir, "/", file_title ,"density.png", sep=""),
        plot=pl,
@@ -160,14 +160,12 @@ ggsave(paste(outdir, "/", file_title ,"density.png", sep=""),
        dpi=300)
 
 # Box plots
-pl <- ggplot(data, aes(x=V1, y=V2)) +
+pl <- ggplot(data, aes(x=V1, y=V2, weight=V3)) +
     geom_boxplot() +
     my.theme +
-    theme(panel.grid.major.y=element_line(colour="#d7d7d7"))
-if (plot.breaks) {
-    pl <- pl + scale_y_continuous(breaks=plot.breaks)
-}
-pl <- pl + xlab("Read Position (bp)") + ylab(metricName) + ggtitle(title)
+    theme(panel.grid.major.y=element_line(colour="#d7d7d7")) +
+    scale_y_continuous(breaks=plot.breaks, limits=lim) +
+    xlab("Read Position (bp)") + ylab(metricName) + ggtitle(title)
 
 ggsave(paste(outdir, "/", file_title ,"boxplots.png", sep=""),
        plot=pl,

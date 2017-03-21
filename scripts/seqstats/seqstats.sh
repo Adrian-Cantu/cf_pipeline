@@ -4,7 +4,7 @@
 #
 # Author: Daniel A Cuevas (dcuevas08.at.gmail.com)
 # Created on 23 Nov 2016
-# Updated on 23 Nov 2016
+# Updated on 20 Mar 2017
 
 VERSION="0.1"
 
@@ -116,15 +116,17 @@ fi
 name=$(basename $fastq)
 name=${name%.*}
 
-# Check if title was given
-if [[ ! $title ]]; then
-    title=$name
-fi
-
 gzip=""
 # Check if files are gzipped
 if (( $gzippedflag )); then
     gzip="--gzip"
+    # File name had two suffixes, must remove one more
+    name=${name%.*}
+fi
+
+# Check if title was given
+if [[ ! $title ]]; then
+    title=$name
 fi
 
 fasta=""
@@ -146,10 +148,9 @@ fi
 
 # Begin statistics scripts
 getTime && echo "${currtime}    *****Starting sequence statistics scripts*****"  >&1
-if (( !$verbose )); then
-    getTime && echo "${currtime}    Note: verbose flag was not set."  >&1
-fi
+(( !$verbose )) && getTime && echo "${currtime}    Note: verbose flag was not set."  >&1
 (( $fastaflag )) && getTime && echo "${currtime}    Note: FASTA flag was set -- no quality output will be produced"  >&1
+(( !$gcflag )) && getTime && echo "${currtime}    Note: GC flag was not set -- no GC output will be produced"  >&1
 
 # Calculate sequencing stats
 cmd="python3 calcSeqStats.py $fastq $outdir --header $fasta $gzip $gc $vflag"
@@ -161,7 +162,7 @@ eval $cmd  2>&1
 if (( $fastaflag )); then
     (( $verbose )) && getTime && echo "${currtime}    Skipping quality plots"  >&1
 else
-    cmd="Rscript seqstats_density.R -i ${outdir}/${name}_qualities -d $outdir --header -s qualities -t $title"
+    cmd="Rscript seqstats_density.R -i ${outdir}/${name}_qualities.tsv -d $outdir --header -s qualities -t $title"
     (( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
     eval $cmd  2>&1
     [[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
@@ -169,7 +170,7 @@ fi
 
 # Plot GC ratio stats
 if (( $gcflag )); then
-    cmd="Rscript seqstats_density.R -i ${outdir}/${name}_gcratios -d $outdir --header -s gcratios -t $title"
+    cmd="Rscript seqstats_density.R -i ${outdir}/${name}_gcratios.tsv -d $outdir --header -s gcratios -t $title"
     (( $verbose )) && getTime && echo "${currtime}    Executing $cmd"  >&1
     eval $cmd  2>&1
     [[ $? -ne 0 ]] && getTime && error "${currtime}    Fail on command: $cmd"
