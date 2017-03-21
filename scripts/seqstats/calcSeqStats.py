@@ -223,10 +223,11 @@ else:
         elif inQual:
             # Get current sequence quality scores
             # Add to list of all quality scores
-            strq = "{:.2f}".format(seq.QualToInt(l))
-            if strq not in allqualities:
-                allqualities[strq] = 0
-            allqualitie[strq] += 1
+            for q in seq.QualToInt(l):
+                strq = "{:.2f}".format(q)
+                if strq not in allqualities:
+                    allqualities[strq] = 0
+                allqualities[strq] += 1
 
             # Calculate average quality values per sequence inverval
             # 10bp intervals
