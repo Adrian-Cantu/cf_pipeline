@@ -268,13 +268,13 @@ if not args.fasta:
     counts = [allqualities[x] for x in quals]
     meanQual = np.average([float(x) for x in quals], weights=counts)
     stdevQual = np.sqrt(np.average([float(x) for x in quals] - meanQual) ** 2,
-                                   weight=counts))
+                                   weight=counts)
 if args.gc:
     gcpercs = allgcs.keys()
     counts = [allgcs[x] for x in gcpercs]
     meanGC = np.average([float(x) for x in gcpercs], weights=counts)
     stdevGC = np.sqrt(np.average([float(x) for x in gcpercs] - meanGC) ** 2,
-                                 weight=counts))
+                                 weight=counts)
 
 # Quality score averages
 if not args.fasta:
