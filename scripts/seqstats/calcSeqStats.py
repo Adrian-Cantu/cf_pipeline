@@ -264,15 +264,13 @@ print("", file=sys.stderr)
 meanLen = np.mean(allReadLengths)
 stdevLen = np.std(allReadLengths)
 if not args.fasta:
-    quals = allqualities.keys()
+    quals = list(allqualities.keys())
     counts = [allqualities[x] for x in quals]
     meanQual = np.average(float(quals), weights=counts)
     stdevQual = np.sqrt(np.average((float(quals) - meanQual) ** 2,
                                    weight=counts))
 if args.gc:
-    meanGC = np.mean(allgcs)
-    stdevGC = np.std(allgcs)
-    gcpercs = allgcs.keys()
+    gcpercs = list(allgcs.keys())
     counts = [allgcs[x] for x in gcpercs]
     meanGC = np.average(float(gcpercs), weights=counts)
     stdevGC = np.sqrt(np.average((float(gcpercs) - meanGC) ** 2,
