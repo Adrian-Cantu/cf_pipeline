@@ -1,0 +1,21 @@
+DIRECTORY	DESCRIPTION	PAIR END CONTENT	SINGLE END CONTENT
+P00_ids	ids.txt file contains the core unique identification name for each sample	ids.txt	ids.txt
+P00_rawreads	Original fastq files 	{ID}_R1.fastq ID_R2.fastq	{ID}.fastq 
+P01_prinseq_output	Fastq files after quality filtering using prinseq	{ID}_1.fastq {ID}_2.fastq {ID}_1_singletons.fastq {ID}_2_singletons.fastq  	{ID}_good.fastq 
+P02_pear_output	Fastq files after joining both ends for the reads that overlapp 	{ID}.assembled.fastq {ID}.unassembled.forward.fastq {ID}.unassembled.reverse.fastq	NA
+P03_qfpassed_fastq	"Fastq that contains all reads that passed quality filters, for PE the qfpassed file contains: 1_singletons, 2_singletons, assembled, unassembled.forward. For SE it’s the prinseq output"	qf_{ID}.fastq	qf_{ID}.fastq
+P03_qfpassed_fasta	Fasta that contains all reads that passed quality filters	qf_{ID}.fasta	qf_{ID}.fasta
+P04_map_HG	Samsoft files for human genome mapping	mapHG_{ID}.samsoft	mapHG_{ID}.samsoft
+P04_noHG	Fasta file of reads that do not map to the human genome	noHG_qf_{ID}.fasta	noHG_qf_{ID}.fasta
+P05_map_rRNA	Samsoft files for ribosomal rna mapping	map_SILVA_{ID}.samsoft	map_SILVA_{ID}.samsoft
+P05_noHG_norRNA	Fasta files of reads that do not map to human genome and do not map to ribosomal rna	norRNA_noHG_qf_{ID}.fasta	norRNA_noHG_qf_{ID}.fasta
+P06_kaiju	Species and Genus microbial taxonomy assignments	kaiju_{ID}.out genus_kaiju_{ID}.summary species_kaiju_{ID}.summary	kaiju_{ID}.out genus_kaiju_{ID}.summary species_kaiju_{ID}.summary
+P07_map_viral_refseq	"Samsoft files for viral reference genomes mapping, hits to viral reference genomes tables"	map_viralrefseq_{ID}.samsoft hits_viralrefseq_{ID}.tab 	map_viralrefseq_{ID}.samsoft hits_viralrefseq_{ID}.tab 
+P08_map_virulence_factors	"tab delimited file for blastx against virulence factors database, file with number of hits to each element of virulence factors database "	blastx_virulencefactors_{ID}.daa tab_blastx_virulencefactors_{ID}.m8 hits_blastx_virulencefactors_{ID}.tab	blastx_virulencefactors_{ID}.daa tab_blastx_virulencefactors_{ID}.m8 hits_blastx_virulencefactors_{ID}.tab
+P09_map_antibiotic_resistance	"tab delimited file for blastx against antibiotic resistance database, file with number of hits to each element of antibiotics resistance"	blastx_arcard_{ID}.daa tab_blastx_arcard_{ID}.m8 hits_blastx_arcard_{ID}.tab	blastx_arcard_{ID}.daa tab_blastx_arcard_{ID}.m8 hits_blastx_arcard_{ID}.tab
+P10_super_focus	"Functional microbial profiles for each sample, inside each folder there are the subsystem levels 1,2,3 and all files"	SF_{ID}/	SF_{ID}/
+P11_map_topbacteria	Samsoft files for the 10 most abundant bacteria		
+P11_frp_topbacteria	Fragment recruitment plots for the 10 most abundant bacteria		
+OUTPUT_figures	all figures 		
+OUTPUT_tables	all tables outputs		
+OUTPUT_methods	"text file with the parameters used on each step, usefull for publication purposes"		
