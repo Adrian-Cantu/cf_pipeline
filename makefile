@@ -1,5 +1,7 @@
 all:
-	scripts/quality.pl -f ../transcriptome/CF094_S1_L001_R1_001.fastq -r ../transcriptome/CF094_S1_L001_R2_001.fastq -t 10
+	cat makefile
+P01:
+	cat IDS.txt | xargs -t -I{} ./scripts/quality.pl -f P00_rawreads/{}_R1_001.fastq -r P00_rawreads/{}_R2_001.fastq -t 20 -o {}
 
-clear:
+clean:
 	rm temp/*

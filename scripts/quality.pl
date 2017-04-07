@@ -19,11 +19,13 @@ my $reverse_file;
 my $lines_R;
 my $lines_F;
 my $threads;
+my $out_file_prefix;
 GetOptions (
     'help'         => \$help,
     'reverse:s'    => \$reverse_file, 
     'forward=s'    => \$forward_file,
     'threads=i'    => \$threads,
+    'out=s'        => \$out_file_prefix,	
 );
 &help if ($help);
 
@@ -82,8 +84,11 @@ for (1 .. $forks) {
    say "Parent saw $pid exiting";
 }
 
-
-
+system "cat temp/passed_$string*_1.fastq > P01_prinseq_output/$out_file_prefix"."_1.fastq";
+system "cat temp/passed_$string*_2.fastq > P01_prinseq_output/$out_file_prefix"."_2.fastq";
+system "cat temp/passed_$string*_1_singletons.fastq > P01_prinseq_output/$out_file_prefix"."_1_singletons.fastq";
+system "cat temp/passed_$string*_2_singletons.fastq > P01_prinseq_output/$out_file_prefix"."_2_singletons.fastq";
+system "make clean";
 
 
 
