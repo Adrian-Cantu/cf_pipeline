@@ -24,5 +24,8 @@ P055:
 
 P07:
 	cat IDS.txt | xargs -I{} sh -c '/home/vito/TOOLS/bin/smalt-0.7.6/src/smalt map -y 0.8 -n 20 -f samsoft -o P07_map_viral_revseq/map_viralrefseq_{}.samsoft /home/vito/TOOLS/DBS/viralrefseq  P05_noHG_norRNA/norRNA_noHG_qf_{}.fasta'
+P075:
+	cat IDS.txt | xargs -t -I{} sh -c 'cat P07_map_viral_refseq/map_viralrefseq_{}.samsoft | grep -v ^@ | cut -f 3 | sort -n | uniq -c | sort -nr |  sed -e "'"s/^ *//"'" | tr "'" "'" \\t | paste -- >  P07_map_viral_refseq/hits_viralrefseq_{}.tab'
+
 clean:
 	rm temp/*
