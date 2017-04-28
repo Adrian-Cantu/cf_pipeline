@@ -27,5 +27,11 @@ P07:
 P075:
 	cat IDS.txt | xargs -t -I{} sh -c 'cat P07_map_viral_refseq/map_viralrefseq_{}.samsoft | grep -v ^@ | cut -f 3 | sort -n | uniq -c | sort -nr |  sed -e "'"s/^ *//"'" | tr "'" "'" \\t | paste -- >  P07_map_viral_refseq/hits_viralrefseq_{}.tab'
 
+P12:
+	cat IDS.txt | xargs -I{} sh -c '/home1/acantu/share/smalt map -y 0.8 -n 20 -f samsoft -o P13_spades_map/map_all_cat_{}.samsoft P12_spades_cross/ALL_CONTIGS  P05_noHG_norRNA/norRNA_noHG_qf_{}.fasta'
+
+P13:
+	cat IDS.txt | xargs -t -I{} sh -c 'cat P13_spades_map/map_all_cat_{}.samsoft | grep -v ^@ | cut -f 3 | sort -n | uniq -c | sort -nr |  sed -e "'"s/^ *//"'" | tr "'" "'" \\t | paste -- >  P13_spades_map/hits_contigs_{}.tab'
+
 clean:
 	rm temp/*
