@@ -1,7 +1,48 @@
 all:
 	cat makefile
 P01:
-	cat IDS.txt | xargs -t -I{} ./scripts/quality.pl -f P00_rawreads/{}_R1_001.fastq -r P00_rawreads/{}_R2_001.fastq -t 20 -o {}
+	cat IDS3.txt IDS4_bis.txt IDS6.txt | xargs -t -I{} ./scripts/quality.pl -f P00_rawreads/{}_R1_001.fastq -r P00_rawreads/{}_R2_001.fastq -t 8 -o {}
+
+
+P015: 
+	cat ${IDS} | xargs -i -t sh -c  'hisat2 -x ~/db/hisat_db/grch38/genome -1  P01_prinseq_output/{}_1.fasta -2  P01_prinseq_output/{}_2.fasta -S P015_hisat_output/{}_hg.sam -f  --new-summary --time --summary-file  P015_hisat_output/{}_log'
+
+
+
+P016: P015
+	cat ${IDS} |  xargs -i -t sh -c 'samtools view -S -f  76  P015_hisat_output/{}_hg.sam | cut -f 1,10 | sort | sed "s/^/>/" | tr "\t" "\n" > P016_hisat_nohit/{}_no_hit_R1.fasta ; samtools view -S -f  140  P015_hisat_output/{}_hg.sam | cut -f 1,10 | sort | sed "s/^/>/" | tr "\t" "\n" > P016_hisat_nohit/{}_no_hit_R2.fasta'
+
+P017: P016
+	cat ${IDS} | xargs -i -t sh -c  'hisat2 -x ~/db/univec/univec -1  P016_hisat_nohit/{}_no_hit_R1.fasta -2  P016_hisat_nohit/{}_no_hit_R2.fasta -S P017_hisat_univec_output/{}_univec.sam -f  --new-summary --time --summary-file  P017_hisat_univec_output/{}_log'
+
+
+P018: P017
+	cat ${IDS} |  xargs -i -t sh -c 'samtools view -S -f  76  P017_hisat_univec_output/{}_univec.sam | cut -f 1,10 | sort | sed "s/^/>/" | tr "\t" "\n" > P018_hisat_univec_nohit/{}_polish_R1.fasta ; samtools view -S -f  140  P017_hisat_univec_output/{}_univec.sam | cut -f 1,10 | sort | sed "s/^/>/" | tr "\t" "\n" > P018_hisat_univec_nohit/{}_polish_R2.fasta'
+
+
+P019: P018
+	cat ${IDS} | xargs -i -t sh -c  'hisat2 -x ~/db/viral_refseq/viral_refseq -U  P018_hisat_univec_nohit/{}_polish_R1.fasta -S P019_hisat_viral_refseq/{}_viral_refseq.sam -f  --new-summary --time --summary-file  P019_hisat_viral_refseq/{}_log'
+
+
+P020: P019
+	cat ${IDS} | xargs -t -i sh -c 'grep -v ^@ P019_hisat_viral_refseq/{}_viral_refseq.sam | cut -f1,3 | sort | uniq | cut -f2 | sort | uniq -c | sort -nr  | sed -e "s/^ *//" | tr " " "\t"  > P020_viral_hits/{}_hits_viral_refseq.tab '
+
+table: P020
+	cat ${IDS} |  xargs -i sh -c 'echo -n "{} " ; grep -c ">" P018_hisat_univec_nohit/{}_polish_R1.fasta ' > Tj.txt
+P021: table 
+	perl frap_normalization.pl -t Tj.txt -m -f ~/db/viral_refseq/viral_refseq.fasta  P020_viral_hits/*.tab > P021_table_viral_hits/frap_viral_refseq.tab
+
+P023:
+	cat ${IDS} |  xargs -i sh -c 'python ~/SUPER-FOCUS/superfocus.py -q P018_hisat_univec_nohit/{}_polish_R1.fasta -dir P023_super_focus -a diamond -o {}'
+
+focus:
+	python ~/SUPER-FOCUS/superfocus.py -m 1 -q focus_link -dir P023_super_focus -a diamond -o all
+
+
+
+test:
+	echo ${IDS}
+
 
 P02:
 	cat IDS.txt | xargs -I{} sh -c 'pear -f P01_prinseq_output/{}_1.fastq -r P01_prinseq_output/{}_2.fastq -o P02_pear_output/{} -j 20'

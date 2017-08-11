@@ -73,7 +73,7 @@ for (1 .. $n) {
     printf "In the child process PID ($$)\n"; 
     sleep 2;
     my $f_num = sprintf("%03d", $forks);
-    system "perl prinseq-lite.pl -verbose -fastq temp/$string" . "_R1.fastq$f_num -fastq2 temp/$string" . "_R2.fastq$f_num -derep 1245 -lc_method entropy -lc_threshold 50 -trim_qual_right 15 -trim_qual_left 15 -trim_qual_type mean -trim_qual_rule lt -trim_qual_window 2 -trim_tail_left 5 -trim_tail_right 5 -min_len 60 -min_qual_mean 15 -ns_max_p 1 -rm_header  -out_bad null -out_good 'temp/passed_$string" . "$f_num' 2> temp/log_$string" . "$f_num";
+    system "perl prinseq-lite.pl -verbose -fastq temp/$string" . "_R1.fastq$f_num -fastq2 temp/$string" . "_R2.fastq$f_num -derep 1245 -lc_method entropy -lc_threshold 50 -trim_qual_right 15 -trim_qual_left 15 -trim_qual_type mean -trim_qual_rule lt -trim_qual_window 2 -trim_tail_left 5 -trim_tail_right 5 -min_len 60 -min_qual_mean 30 -ns_max_p 1 -rm_header  -out_bad null -out_format 1 -out_good 'temp/passed_$string" . "$f_num' 2> temp/log_$string" . "$f_num";
     say "Child ($$) exiting";
     exit;
   }
@@ -84,11 +84,11 @@ for (1 .. $forks) {
    say "Parent saw $pid exiting";
 }
 
-system "cat temp/passed_$string*_1.fastq > P01_prinseq_output/$out_file_prefix"."_1.fastq";
-system "cat temp/passed_$string*_2.fastq > P01_prinseq_output/$out_file_prefix"."_2.fastq";
-system "cat temp/passed_$string*_1_singletons.fastq > P01_prinseq_output/$out_file_prefix"."_1_singletons.fastq";
-system "cat temp/passed_$string*_2_singletons.fastq > P01_prinseq_output/$out_file_prefix"."_2_singletons.fastq";
-system "make clean";
+system "cat temp/passed_$string*_1.fasta > P01_prinseq_output/$out_file_prefix"."_1.fasta";
+system "cat temp/passed_$string*_2.fasta > P01_prinseq_output/$out_file_prefix"."_2.fasta";
+system "cat temp/passed_$string*_1_singletons.fasta > P01_prinseq_output/$out_file_prefix"."_1_singletons.fasta";
+system "cat temp/passed_$string*_2_singletons.fasta > P01_prinseq_output/$out_file_prefix"."_2_singletons.fasta";
+#system "make clean";
 
 
 
