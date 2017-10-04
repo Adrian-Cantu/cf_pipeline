@@ -18,8 +18,6 @@ foreach (@list) {
 	}
 }
 
-foreach (@list) {
-	my @f=split(/_/,$_);
-	my $id=join('_',$f[0],$f[1],$f[2]);
-	print join("\t",$id,@{$hash{$id}}) , "\n";
+foreach (keys %hash) {
+	print join("\t",$_,@{$hash{$_}}) , "\n";
 }
