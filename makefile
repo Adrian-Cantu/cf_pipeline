@@ -51,6 +51,20 @@ P01_single:
 P015_single:
 	cat ${IDS} | xargs -i -t sh -c  '${hisat2} -x ${db_folder}/grch38/genome -U  P01_prinseq_output/{}.fasta -S P015_hisat_output/{}_hg.sam -f  --new-summary --time --summary-file  P015_hisat_output/{}_log'
 
+
+P016_single:
+	cat ${IDS} |  xargs -i -t sh -c 'samtools view -S -f 4  P015_hisat_output/{}_hg.sam | cut -f 1,10 | sort | sed "s/^/>/" | tr "\t" "\n" > P016_hisat_nohit/{}_no_hit.fasta '
+
+
+P017_single:
+	cat ${IDS} | xargs -i -t sh -c  '${hisat2} -x ${db_folder}/univec/univec -U P016_hisat_nohit/{}_no_hit.fasta -S P017_hisat_univec_output/{}_univec.sam -f  --new-summary --time --summary-file  P017_hisat_univec_output/{}_log'
+
+
+P018_single: 
+	cat ${IDS} |  xargs -i -t sh -c 'samtools view -S -f  4  P017_hisat_univec_output/{}_univec.sam | cut -f 1,10 | sort | sed "s/^/>/" | tr "\t" "\n" > P018_hisat_univec_nohit/{}_polish.fasta '
+
+
+
 test:
 	echo ${IDS}
 
@@ -87,3 +101,9 @@ P13:
 
 clean:
 	rm temp/*
+
+
+#ttest:
+	
+#	cat kk | xargs -t -i  sh -c 'echo $(echo -e '"'"'{}'"'"' | cut -f2 -s) $(echo -e '"'"'{}'"'"' | cut -f1 -s) '
+#
