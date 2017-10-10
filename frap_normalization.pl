@@ -71,11 +71,8 @@ foreach(@ARGV) {
 	
 	#getting IDS from filename, this need to be much more general
 
-	my $kk = pop @sample;
-	$kk = pop @sample;
-	$kk = pop @sample;
-	$kk = join('_',@sample);
-	$samples{$_} = $kk;	
+	(my $kk = $sample_id) =~s/_hits_viral_refseq//;
+    $samples{$_} = $kk;	
 }
 
 
@@ -91,9 +88,13 @@ foreach(@ARGV) {
 	my $f_id=$_;
 	while(readline($filehandlers{$f_id})) {
 #next if $_=~/^\-$/;
-	my @fields=split;
-	print "$fields[1]\n" unless exists $list{$f_id}->{$fields[1]}; 
-	$list{$f_id}->{$fields[1]}=$list{$f_id}->{$fields[1]}+$fields[0];
+	    my @fields=split;
+	    print "$fields[1]\n" unless ((exists $list{$f_id}->{$fields[1]}) || ($fields[1] eq '*')); 
+        if (exists $list{$f_id}->{$fields[1]}) {
+	        $list{$f_id}->{$fields[1]}=$list{$f_id}->{$fields[1]}+$fields[0];
+        } else {
+            $list{$f_id}->{$fields[1]}=$fields[0];
+        }
 	}
 }
 foreach(@glob_ARGV) {
@@ -120,9 +121,13 @@ print "\n";
 
 foreach(@order) {
 	my $g_id=$_;
-	print "$g_id";
+
+    my $sumall = 0;
+    $sumall+=$list{$_}->{$g_id} foreach(@glob_ARGV);
+	print "$g_id" if ($sumall > 0);
 	foreach(@glob_ARGV) {
-        	my $f_id=$_;
+        next unless ($sumall > 0);
+        my $f_id=$_;
 		if ($hits_only) {
 			print "\t$list{$_}->{$g_id}";
 		} elsif ($norm_only) {
@@ -133,6 +138,6 @@ foreach(@order) {
 	       }	       
 		
 	}
-	print "\t$desc{$g_id}\n";
+	print "\t$desc{$g_id}\n" if ($sumall > 0);
 }
 

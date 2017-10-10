@@ -7,6 +7,11 @@ hisat2 = /home1/acantu/share/hisat2-2.1.0/hisat2
 db_folder = /home1/acantu/share/db
 focus_folder = /home1/acantu/bin/SUPERFOCUS_0.27
 
+all : result_$ARGV[0]
+	\@echo "DONE :)" 
+
+makefile: $ARGV[0]
+	./make_makefiles.pl $ARGV[0]
 
 EOF
 
@@ -19,17 +24,10 @@ while(<INFILE>) {
 }
 close(INFILE);
 
-open OUT, '>', "P01_prinseq_output/makefile" || die $!;
-print OUT $header;
-#open OUT2, '>', "P015_hisat_output/makefile" || die $!;
-#print OUT2 $header;
-#open OUT3, '>', "" || die $!;
-#print OUT3 $header;
-
-open MAIN , '>' , "kk_makefile" || die $!;
+open MAIN , '>' , "makefile" || die $!;
 print MAIN $header;
-my %hash_single;
-my %hash_double;
+my @single_id;
+my @double_id;
 foreach(@order) {
 	my @f=split;
 	if (scalar(@f)==2) {
@@ -57,6 +55,16 @@ foreach(@order) {
 
         print MAIN "P020_viral_hits/$f[0]_hits_viral_refseq.tab : P019_hisat_viral_refseq/$f[0]_viral_refseq.sam\n";
         print MAIN qq(\tgrep -v ^@ P019_hisat_viral_refseq/$f[0]_viral_refseq.sam | cut -f1,3 | sort | uniq | cut -f2 | sort | uniq -c | sort -nr  | sed -e "s/^ *//" | tr " " "\\t"  > P020_viral_hits/$f[0]_hits_viral_refseq.tab\n\n);
+        push @double_id,$f[0];
+
 	}
 }
+    my @tab_list= map {'P020_viral_hits/'.$_.'_hits_viral_refseq.tab'} @double_id ;
+    my $tab_list= join(' ',@tab_list);
+    print MAIN "Tj.txt : $tab_list\n";
+    print MAIN qq(\tcat $ARGV[0] | cut -f 1 | xargs -I{} sh -c 'echo -n "{} " ; grep -c ">" P018_hisat_univec_nohit/{}_polish_R1.fasta ' > Tj.txt\n\n);
+
+    print MAIN "result_$ARGV[0] : Tj.txt\n";
+    print MAIN qq(\tperl frap_normalization.pl -t Tj.txt -h -f \${db_folder}/viral_refseq.fasta $tab_list > result_$ARGV[0]);
+
 
