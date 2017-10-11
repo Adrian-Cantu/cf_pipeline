@@ -65,6 +65,6 @@ foreach(@order) {
     print MAIN qq(\tcat $ARGV[0] | cut -f 1 | xargs -I{} sh -c 'echo -n "{} " ; grep -c ">" P018_hisat_univec_nohit/{}_polish_R1.fasta ' > Tj.txt\n\n);
 
     print MAIN "result_$ARGV[0] : Tj.txt\n";
-    print MAIN qq(\tperl frap_normalization.pl -t Tj.txt -h -f \${db_folder}/viral_refseq.fasta $tab_list > result_$ARGV[0]);
+    print MAIN qq(\tperl frap_normalization.pl -t Tj.txt -m -f \${db_folder}/viral_refseq.fasta $tab_list > result_$ARGV[0]);
 
 
