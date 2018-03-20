@@ -5,7 +5,7 @@ use warnings;
 
 my %hash;
 
-my $list=`ls -1p P00_rawreads | grep fastq\$`;
+my $list=`ls -1p P00_rawreads | grep -E  'fastq\$|fastq.gz\$'`;
 chomp $list;
 my @list=split(/\n/,$list);
 foreach (@list) {
