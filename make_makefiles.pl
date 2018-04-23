@@ -47,13 +47,20 @@ foreach(@order) {
         print qq(\tsamtools view -S -f  4  P03_map_univec/$f[0]_univec.sam | cut -f 1,10 | sort | sed "s/^/>/" | tr "\\t" "\\n" > P03_map_univec/$f[0]_no_hit.fasta\n\n);
 
         print "P04_map_gg/$f[0]_gg.sam :  P03_map_univec/$f[0]_no_hit.fasta\n";
-        print "\t\${hisat2} -x \${db_folder}/greengenes/gg -p \${threads}  -U  P03_map_univec/$f[0]_no_hit.fasta -S P04_map_gg/$f[0]_gg.sam  -f  --new-summary --time --summary-file  P03_map_univec/$f[0]_log\n\n";
+        print "\t\${hisat2} -x \${db_folder}/greengenes/gg -p \${threads}  -U  P03_map_univec/$f[0]_no_hit.fasta -S P04_map_gg/$f[0]_gg.sam  -f  --new-summary --time --summary-file  P04_map_gg/$f[0]_log\n\n";
 
-        print "P05_polish/$f[0]_polish.fasta : P04_map_gg/$f[0]_gg.sam\n";
-        print qq(\tsamtools view -S -f  4  P04_map_gg/$f[0]_gg.sam | cut -f 1,10 | sort | sed "s/^/>/" | tr "\\t" "\\n" > P05_polish/$f[0]_polish.fasta\n\n);
+        print "P04_map_gg/$f[0]_no_hit.fasta : P04_map_gg/$f[0]_gg.sam\n";
+        print qq(\tsamtools view -S -f  4  P04_map_gg/$f[0]_gg.sam | cut -f 1,10 | sort | sed "s/^/>/" | tr "\\t" "\\n" > P04_map_gg/$f[0]_no_hit.fasta\n\n);
+        
+        print "P05_silva/$f[0]_silva.sam :  P04_map_gg/$f[0]_no_hit.fasta\n";
+        print "\t\${hisat2} -x \${db_folder}/greengenes/gg -p \${threads}  -U P04_map_gg/$f[0]_no_hit.fasta -S P05_silva/$f[0]_silva.sam  -f  --new-summary --time --summary-file  P05_silva/$f[0]_log\n\n";
+
+        print "P06_polish/$f[0]_polish.fasta : P05_silva/$f[0]_silva.sam\n";
+        print qq(\tsamtools view -S -f  4  P05_silva/$f[0]_silva.sam | cut -f 1,10 | sort | sed "s/^/>/" | tr "\\t" "\\n" > P06_polish/$f[0]_polish.fasta\n\n);
+
   #      print "P05_polish/$f[0]_polish.fasta  : P04_map_gg/$f[0]_no_hit.fasta"
-        print MAIN "P11_virus/$f[0]_viral_refseq.sam : P05_polish/$f[0]_polish.fasta\n";
-        print MAIN "\t\${hisat2} -x \${db_folder}/viral_refseq -p \${threads} -U  P05_polish/$f[0]_polish.fasta -S P11_virus/$f[0]_viral_refseq.sam -f --new-summary --time --summary-file P11_virus/$f[0]_log\n\n";
+        print MAIN "P11_virus/$f[0]_viral_refseq.sam : P06_polish/$f[0]_polish.fasta\n";
+        print MAIN "\t\${hisat2} -x \${db_folder}/viral_refseq -p \${threads} -U  P06_polish/$f[0]_polish.fasta -S P11_virus/$f[0]_viral_refseq.sam -f --new-summary --time --summary-file P11_virus/$f[0]_log\n\n";
         print MAIN "P11_virus/$f[0]_hits_viral_refseq.tab : P11_virus/$f[0]_viral_refseq.sam\n";
         print MAIN qq(\tgrep -v ^@ P11_virus/$f[0]_viral_refseq.sam | cut -f1,3 | sort | uniq | cut -f2 | sort | uniq -c | sort -nr  | sed -e "s/^ *//" | tr " " "\\t"  > P11_virus/$f[0]_hits_viral_refseq.tab\n\n);
         push @double_id,$f[0];
@@ -90,7 +97,7 @@ foreach(@order) {
     my @tab_list= map {'P11_virus/'.$_.'_hits_viral_refseq.tab'} @double_id ;
     my $tab_list= join(' ',@tab_list);
     print MAIN "Tj.txt : $tab_list\n";
-    print MAIN qq(\tcat $ARGV[0] | cut -f 1 | xargs -I{} sh -c 'echo -n "{} " ; grep -c ">" P018_hisat_univec_nohit/{}_polish_R1.fasta ' > Tj.txt\n\n);
+    print MAIN qq(\tcat $ARGV[0] | cut -f 1 | xargs -I{} sh -c 'echo -n "{} " ; grep -c ">" P06_polish/{}_polish.fasta ' > Tj.txt\n\n);
 
     print MAIN "result_$ARGV[0] : Tj.txt\n";
     print MAIN qq(\tperl frap_normalization.pl -t Tj.txt -m -f \${db_folder}/viral_refseq.fasta $tab_list > result_$ARGV[0]);
